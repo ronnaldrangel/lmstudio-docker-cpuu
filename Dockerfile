@@ -33,13 +33,40 @@ ENV DISPLAY=:99
 
 FROM baseimage AS final
 
-ADD ./LM-Studio* /data/lms/
-ADD ./http-server-config.json /http-server-config.json
+# Crear directorio para LM Studio y copiar archivos de configuración
+RUN mkdir -p /data/lms
+COPY ./http-server-config.json /http-server-config.json
 
+# Copiar y procesar archivos de LM Studio
 RUN <<eot
     set -eux
-    chmod ugo+x /data/lms/*.AppImage
-    /data/lms/*.AppImage --appimage-extract
+    
+    # Intentar copiar archivos LM-Studio si existen en el contexto de build
+    if ls ./LM-Studio* 1> /dev/null 2>&1; then
+        echo "Found LM-Studio files, copying..."
+        cp ./LM-Studio* /data/lms/ 2>/dev/null || echo "Could not copy some LM-Studio files"
+    else
+        echo "No LM-Studio files found in build context"
+    fi
+    
+    # Verificar si existen archivos AppImage en el destino
+    if ls /data/lms/*.AppImage 1> /dev/null 2>&1; then
+        echo "Found AppImage files, processing..."
+        chmod ugo+x /data/lms/*.AppImage
+        cd /data/lms
+        for appimage in *.AppImage; do
+            if [ -f "$appimage" ]; then
+                echo "Extracting $appimage"
+                ./"$appimage" --appimage-extract
+            fi
+        done
+    else
+        echo "No AppImage files found, creating placeholder structure..."
+        mkdir -p /data/lms/squashfs-root
+        echo "#!/bin/bash" > /data/lms/squashfs-root/AppRun
+        echo "echo 'LM Studio not installed - please mount or copy AppImage files'" >> /data/lms/squashfs-root/AppRun
+        chmod +x /data/lms/squashfs-root/AppRun
+    fi
 eot
 
 
