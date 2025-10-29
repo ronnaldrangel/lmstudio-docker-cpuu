@@ -1,10 +1,10 @@
 
-ARG baseimage=nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
+# Usar imagen base Ubuntu estándar para CPU (sin CUDA/GPU)
+ARG baseimage=ubuntu:24.04
 
 FROM ${baseimage} AS baseimage
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-
 
 ENV TZ="Etc/UTC"
 
@@ -19,7 +19,7 @@ RUN <<eot
     apt -qy install --no-install-recommends \
         -o APT::Install-Recommends=false \
         -o APT::Install-Suggests=false \
-        console-setup tzdata dbus x11-utils x11-xserver-utils libgl1-mesa-glx 
+        console-setup tzdata dbus x11-utils x11-xserver-utils
     apt -qy update
     DEBIAN_FRONTEND=noninteractive  apt -qy install --no-install-recommends \
         -o APT::Install-Recommends=false \
