@@ -34,7 +34,7 @@ ENV DISPLAY=:99
 FROM baseimage AS final
 
 # Crear directorio para LM Studio y copiar archivos de configuración
-RUN mkdir -p /data/lms
+RUN mkdir -p /data/lms /root/.cache/lm-studio/.internal /root/.cache/lm-studio/bin
 COPY ./http-server-config.json /http-server-config.json
 
 # Copiar y procesar archivos de LM Studio
