@@ -3,10 +3,9 @@
 ARG baseimage=ubuntu:24.04
 
 FROM ${baseimage} AS baseimage
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-
-ENV TZ="Etc/UTC"
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV TZ=Etc/UTC
 
 ARG DEBIAN_FRONTEND=noninteractive
 # Build arguments
@@ -24,7 +23,7 @@ RUN <<eot
     DEBIAN_FRONTEND=noninteractive  apt -qy install --no-install-recommends \
         -o APT::Install-Recommends=false \
         -o APT::Install-Suggests=false \
-        libfuse2 kmod fuse libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgtk-3-0 libgbm1 libasound2 xserver-xorg xvfb x11vnc
+        libfuse2 kmod fuse libglib2.0-0 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgtk-3-0 libgbm1 libasound2t64 xserver-xorg xvfb x11vnc
     mkdir -p /root/.vnc && x11vnc -storepasswd test123 /root/.vnc/passwd
 eot
 
